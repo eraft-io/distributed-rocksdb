@@ -34,6 +34,10 @@
 #include <grpcpp/grpcpp.h>
 #include <spdlog/spdlog.h>
 #include <time.h>
+#include <spdlog/sinks/daily_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
 
 #include <iostream>
 
@@ -57,6 +61,7 @@ enum op_code {
   PutKV,
   GetKV,
   RunBenchmark,
+  GetStats,
   Unknow
 };
 
@@ -73,12 +78,17 @@ op_code hashit(std::string const& inString) {
     return PutKV;
   if (inString == "get_kv")
     return GetKV;
+  if (inString == "stats")
+    return GetStats;
   if (inString == "run_bench")
     return RunBenchmark;
   return Unknow;
 }
 
 int main(int argc, char* argv[]) {
+  auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+  console_sink->set_level(spdlog::level::info);
+  console_sink->set_pattern("[%H:%M:%S %z] [%@] %v");
   if (argc < 2) {
     std::cout << "Welcome to eraftkv-ctl, Copyright (c) 2023 ERaftGroup "
               << CTL_VERSION << std::endl;
@@ -99,6 +109,8 @@ int main(int argc, char* argv[]) {
     std::cout << "set_slot: ./eraftkv-ctl [metaserver addresses] set_slot "
                  "[groupid] [startSlot-endSlot]"
               << std::endl;
+    std::cout << "query server stats: ./eraftkv-ctl [metaserver addresses] stats" 
+              << std::endl;
     exit(-1);
   }
 
@@ -109,7 +121,7 @@ int main(int argc, char* argv[]) {
   switch (hashit(cmd)) {
     case AddGroup: {
       int shard_id = stoi(std::string(argv[3]));
-      eraftkv_ctl.AddServerGroupToMeta(shard_id, -1, std::string(argv[4]));
+      eraftkv_ctl.AddServerGroupToMeta(shard_id, -1, std::string(argv[4])) ? std::cout << "ok" : std::cout << "err";
       break;
     }
     case QeuryGroups: {
@@ -139,7 +151,7 @@ int main(int argc, char* argv[]) {
     }
     case RunBenchmark: {
       int N = stoi(std::string(argv[3]));
-      eraftkv_ctl.RunBench(N);
+      eraftkv_ctl.RunRwBench(N);
       break;
     }
     case PutKV: {
@@ -152,6 +164,11 @@ int main(int argc, char* argv[]) {
     case GetKV: {
       eraftkv_ctl.UpdateKvServerLeaderStubByPartitionKey(std::string(argv[3]));
       eraftkv_ctl.GetKV(std::string(argv[3]));
+      break;
+    }
+    case GetStats: {
+      eraftkv_ctl.UpdateKvServerLeaderStubByPartitionKey("");
+      eraftkv_ctl.QueryStats();
       break;
     }
     default:

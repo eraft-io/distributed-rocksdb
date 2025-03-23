@@ -43,7 +43,6 @@
 
 #include "eraft/raft_server.h"
 #include "eraftkv_server.h"
-#include "httplib.h"
 
 DEFINE_int32(svr_id, 0, "server id");
 DEFINE_string(kv_db_path, "", "kv rocksdb path");
@@ -51,19 +50,7 @@ DEFINE_string(log_db_path, "", "log rocksdb path");
 DEFINE_string(snap_db_path, "", "snapshot db path");
 DEFINE_string(peer_addrs, "", "peer address");
 DEFINE_string(log_file_path, "", "log file path");
-DEFINE_int32(monitor_port, 18080, "monitor port");
 
-static void RunHTTPServer(std::atomic<std::string*>* json_stat,
-                          int32_t                    monitor_port) {
-  httplib::Server svr;
-  svr.Get("/collect_stats",
-          [json_stat](const httplib::Request& req, httplib::Response& res) {
-            ERaftKvServer::ReportStats();
-            res.set_header("Access-Control-Allow-Origin", "*");
-            res.set_content(*(*json_stat), "application/json");
-          });
-  svr.listen("0.0.0.0", monitor_port);
-}
 
 /**
  * @brief
@@ -103,18 +90,11 @@ int main(int argc, char* argv[]) {
 
   spdlog::logger logger("multi_sink", sink_list.begin(), sink_list.end());
   logger.set_level(spdlog::level::debug);
-  logger.warn("this should appear in both console and file");
-  logger.info(
-      "this message should not appear in the console, only in the file");
 
   spdlog::set_default_logger(std::make_shared<spdlog::logger>(
       "multi_sink", spdlog::sinks_init_list({console_sink, file_sink})));
   SPDLOG_INFO("eraftkv server start with peer_addrs " + options_.peer_addrs +
               " kv_db_path " + options_.kv_db_path);
-
-  std::thread httpSvrThread(
-      &RunHTTPServer, &ERaftKvServer::stat_json_str_, FLAGS_monitor_port);
-  httpSvrThread.detach();
 
   server.BuildAndRunRpcServer();
   return 0;

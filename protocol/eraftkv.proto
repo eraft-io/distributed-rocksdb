@@ -185,6 +185,31 @@ message SSTFileContent {
   bytes content = 3;
 }
 
+message ServerStatsReq {
+  string client_id = 1;
+}
+
+message ServerStatsResp {
+  int64 total_write_cnt = 1;
+  int64 total_read_cnt  = 2;
+  int64 total_write_bytes = 3;
+  int64 total_read_bytes = 4;
+  int64 block_cache_miss = 5;
+  int64 block_cache_hit = 6;
+  int64 block_cache_write_bytes = 7;
+  int64 block_cache_read_bytes = 8;
+  int64 memtable_hit = 9;
+  int64 memtable_miss = 10;
+  int64 get_hit_l0 = 11;
+  int64 get_hit_l1 = 12;
+  int64 get_hit_l2_and_up = 13;
+  int64 row_cache_hit = 14;
+  int64 row_cache_miss = 15;
+  int64 compact_read_bytes = 16;
+  int64 compact_write_bytes = 17;
+  int64 flush_write_bytes = 18;
+}
+
 service ERaftKv {
   rpc RequestVote(RequestVoteReq) returns (RequestVoteResp);
   rpc AppendEntries(AppendEntriesReq) returns (AppendEntriesResp);
@@ -194,4 +219,5 @@ service ERaftKv {
   rpc ProcessRWOperation(ClientOperationReq) returns (ClientOperationResp);
   rpc ClusterConfigChange(ClusterConfigChangeReq)
       returns (ClusterConfigChangeResp);
+  rpc ServerStats(ServerStatsReq) returns (ServerStatsResp);
 }

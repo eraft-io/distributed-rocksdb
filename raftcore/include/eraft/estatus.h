@@ -33,6 +33,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 /**
  * @brief
  *
@@ -44,4 +46,26 @@ enum class EStatus {
   kPutKeyToRocksDBErr = 3,
   kError = 4,
   kDelFromRocksDBErr = 5,
+};
+
+
+struct DBStats {
+  uint64_t keys_written;
+  uint64_t keys_read;
+  uint64_t total_write_bytes;
+  uint64_t total_read_bytes;
+  uint64_t block_cache_miss;
+  uint64_t block_cache_hit;
+  uint64_t block_cache_write_bytes;
+  uint64_t block_cache_read_bytes;
+  uint64_t memtable_hit;
+  uint64_t memtable_miss;
+  uint64_t get_hit_l0;
+  uint64_t get_hit_l1;
+  uint64_t get_hit_l2_and_up;
+  uint64_t row_cache_hit;
+  uint64_t row_cache_miss;
+  uint64_t compact_read_bytes;
+  uint64_t compact_write_bytes;
+  uint64_t flush_write_bytes;
 };

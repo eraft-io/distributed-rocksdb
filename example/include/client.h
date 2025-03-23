@@ -80,7 +80,11 @@ class Client {
 
   std::pair<std::string, std::string> GetKV(std::string k);
 
-  void RunBench(int64_t N);
+  std::string QueryStats();
+
+  void RunRwBench(int64_t N);
+
+  std::string ProtoMessageToJsonString(google::protobuf::Message& msg);
 
   ~Client();
 

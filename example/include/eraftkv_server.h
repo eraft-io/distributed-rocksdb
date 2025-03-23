@@ -111,8 +111,6 @@ class ERaftKvServer : public eraftkv::ERaftKv::Service {
     if (server_role == 0) {
       DirectoryTool::MkDir(options_.snap_db_path);
     }
-    stat_json_str_ = new std::string("");
-    cluster_stats_json_str_ = new std::string("");
     raft_config.snap_path = options_.snap_db_path;
     options_.svr_addr = raft_config.peer_address_map[options_.svr_id];
     GRpcNetworkImpl* net_rpc = new GRpcNetworkImpl();
@@ -186,6 +184,10 @@ class ERaftKvServer : public eraftkv::ERaftKv::Service {
                              const eraftkv::ClusterConfigChangeReq* req,
                              eraftkv::ClusterConfigChangeResp*      resp);
 
+  Status ServerStats(ServerContext*  context,
+   const eraftkv::ServerStatsReq* req,
+   eraftkv::ServerStatsResp* resp);
+
 
   Status PutSSTFile(ServerContext*                               context,
                     grpc::ServerReader<eraftkv::SSTFileContent>* reader,
@@ -214,11 +216,11 @@ class ERaftKvServer : public eraftkv::ERaftKv::Service {
 
   static bool* is_ok_to_response_;
 
-  static std::atomic<std::string*> stat_json_str_;
-
-  static std::atomic<std::string*> cluster_stats_json_str_;
-
   static int svr_role_;
+
+  static int64_t total_write_cnt_;
+
+  static int64_t total_read_cnt_;
 
  private:
   /**

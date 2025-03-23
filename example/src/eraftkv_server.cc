@@ -40,7 +40,6 @@
 
 #include "client.h"
 #include "file_reader_into_stream.h"
-#include "httplib.h"
 #include "sequential_file_reader.h"
 #include "sequential_file_writer.h"
 
@@ -53,11 +52,11 @@ std::mutex* ERaftKvServer::response_ready_mutex_ = nullptr;
 
 bool* ERaftKvServer::is_ok_to_response_ = nullptr;
 
-std::atomic<std::string*> ERaftKvServer::stat_json_str_ = nullptr;
-
-std::atomic<std::string*> ERaftKvServer::cluster_stats_json_str_ = nullptr;
-
 int ERaftKvServer::svr_role_ = -1;
+
+int64_t ERaftKvServer::total_read_cnt_ = 0;
+
+int64_t ERaftKvServer::total_write_cnt_ = 0;
 
 /**
  * @brief
@@ -152,6 +151,7 @@ grpc::Status ERaftKvServer::ProcessRWOperation(
         res->set_success(val.second);
         res->set_op_type(eraftkv::ClientOpType::Get);
         res->set_op_sign(kv_op.op_sign());
+        total_read_cnt_ ++;
         break;
       }
       case eraftkv::ClientOpType::Put:
@@ -178,6 +178,7 @@ grpc::Status ERaftKvServer::ProcessRWOperation(
           res->set_success(true);
           res->set_op_type(kv_op.op_type());
           res->set_op_sign(rand_seq);
+          total_write_cnt_ ++;
         }
         break;
       }
@@ -257,6 +258,31 @@ grpc::Status ERaftKvServer::ClusterConfigChange(
   return grpc::Status::OK;
 }
 
+Status ERaftKvServer::ServerStats(ServerContext*  context,
+  const eraftkv::ServerStatsReq* req,
+  eraftkv::ServerStatsResp* resp) {
+  DBStats stats = raft_context_->store_->GetDBStats();
+  resp->set_total_write_cnt(stats.keys_written);
+  resp->set_total_read_cnt(stats.keys_read);
+  resp->set_total_write_bytes(stats.total_write_bytes);
+  resp->set_total_read_bytes(stats.total_read_bytes);
+  resp->set_block_cache_miss(stats.block_cache_miss);
+  resp->set_block_cache_hit(stats.block_cache_hit);
+  resp->set_block_cache_write_bytes(stats.block_cache_write_bytes);
+  resp->set_block_cache_read_bytes(stats.block_cache_read_bytes);
+  resp->set_memtable_hit(stats.memtable_hit);
+  resp->set_memtable_miss(stats.memtable_miss);
+  resp->set_get_hit_l0(stats.get_hit_l0);
+  resp->set_get_hit_l1(stats.get_hit_l1);
+  resp->set_get_hit_l2_and_up(stats.get_hit_l2_and_up);
+  resp->set_row_cache_hit(stats.row_cache_hit);
+  resp->set_row_cache_miss(stats.row_cache_miss);
+  resp->set_compact_read_bytes(stats.compact_read_bytes);
+  resp->set_compact_write_bytes(stats.compact_write_bytes);
+  resp->set_flush_write_bytes(stats.flush_write_bytes);
+  return grpc::Status::OK;
+}
+
 grpc::Status ERaftKvServer::PutSSTFile(
     ServerContext*                               context,
     grpc::ServerReader<eraftkv::SSTFileContent>* reader,
@@ -297,103 +323,4 @@ EStatus ERaftKvServer::BuildAndRunRpcServer() {
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
   server->Wait();
   return EStatus::kOk;
-}
-
-void ERaftKvServer::UpdateMetaStats() {
-  try {
-    if (raft_context_->GetLeaderId() == -1) {
-      return;
-    }
-    auto kvs = raft_context_->store_->PrefixScan(SG_META_PREFIX, 0, 256);
-    for (auto kv : kvs) {
-      eraftkv::ShardGroup* sg = new eraftkv::ShardGroup();
-      sg->ParseFromString(kv.second);
-      auto sg_leader_id = sg->leader_id();
-      *cluster_stats_json_str_ = "[";
-      auto shard_svr_addrs =
-          StringUtil::Split(DEFAULT_SHARD_MONITOR_ADDRS, ',');
-      for (auto shard_svr : shard_svr_addrs) {
-        httplib::Client cli(shard_svr);
-        cli.set_connection_timeout(0, 200);
-        cli.set_read_timeout(0, 200);
-        cli.set_write_timeout(0, 200);
-        auto res = cli.Get("/collect_stats");
-      }
-      for (auto server : sg->servers()) {
-        *cluster_stats_json_str_ += ("{\"id\":" + std::to_string(server.id()));
-        *cluster_stats_json_str_ += (",\"addr\":\"" + server.address() + "\"");
-        if (sg_leader_id == server.id()) {
-          *cluster_stats_json_str_ += ",\"state\":\"L\"";
-        } else {
-          *cluster_stats_json_str_ += ",\"state\":\"F\"";
-        }
-        *cluster_stats_json_str_ += "},";
-      }
-      (*cluster_stats_json_str_).pop_back();
-      *cluster_stats_json_str_ += "]";
-      delete sg;
-    }
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << '\n';
-  }
-}
-
-void ERaftKvServer::ReportStats() {
-  try {
-    if (raft_context_->GetLeaderId() == -1) {
-      return;
-    }
-    auto        nodes = raft_context_->GetNodes();
-    std::string group_server_addresses = "";
-    for (auto node : nodes) {
-      group_server_addresses += node->address + ",";
-    }
-    group_server_addresses.pop_back();
-    Client metaserver_cli = Client();
-    metaserver_cli.AddServerGroupToMeta(
-        1, raft_context_->GetLeaderId(), group_server_addresses);
-    *stat_json_str_ = "{";
-    *stat_json_str_ +=
-        "\"commit_index\":" + std::to_string(raft_context_->GetCommitIndex()) +
-        ",";
-    *stat_json_str_ += "\"applied_index\":" +
-                       std::to_string(raft_context_->GetAppliedIndex()) + ",";
-    *stat_json_str_ += "\"prefix_logs\":[";
-    for (auto log : raft_context_->GetPrefixLogs()) {
-      *stat_json_str_ += "{\"index\":" + std::to_string(log->id()) + ",";
-      *stat_json_str_ += "\"term\":" + std::to_string(log->term()) + ",";
-      switch (log->e_type()) {
-        case eraftkv::EntryType::Normal: {
-          eraftkv::KvOpPair* op_pair = new eraftkv::KvOpPair();
-          op_pair->ParseFromString(log->data());
-          *stat_json_str_ +=
-              "\"val\":\"" + op_pair->value().substr(0, 6) + "\"},";
-          break;
-        }
-        default:
-          break;
-      }
-    }
-    (*stat_json_str_).pop_back();
-    *stat_json_str_ += "],\"suffix_logs\":[";
-    for (auto log : raft_context_->GetSuffixLogs()) {
-      *stat_json_str_ += "{\"index\":" + std::to_string(log->id()) + ",";
-      *stat_json_str_ += "\"term\":" + std::to_string(log->term()) + ",";
-      switch (log->e_type()) {
-        case eraftkv::EntryType::Normal: {
-          eraftkv::KvOpPair* op_pair = new eraftkv::KvOpPair();
-          op_pair->ParseFromString(log->data());
-          *stat_json_str_ +=
-              "\"val\":\"" + op_pair->value().substr(0, 6) + "\"},";
-          break;
-        }
-        default:
-          break;
-      }
-    }
-    (*stat_json_str_).pop_back();
-    *stat_json_str_ += "]}";
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << '\n';
-  }
 }

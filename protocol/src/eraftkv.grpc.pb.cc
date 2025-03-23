@@ -28,6 +28,7 @@ static const char* ERaftKv_method_names[] = {
   "/eraftkv.ERaftKv/PutSSTFile",
   "/eraftkv.ERaftKv/ProcessRWOperation",
   "/eraftkv.ERaftKv/ClusterConfigChange",
+  "/eraftkv.ERaftKv/ServerStats",
 };
 
 std::unique_ptr< ERaftKv::Stub> ERaftKv::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -43,6 +44,7 @@ ERaftKv::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   , rpcmethod_PutSSTFile_(ERaftKv_method_names[3], ::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
   , rpcmethod_ProcessRWOperation_(ERaftKv_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ClusterConfigChange_(ERaftKv_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ServerStats_(ERaftKv_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ERaftKv::Stub::RequestVote(::grpc::ClientContext* context, const ::eraftkv::RequestVoteReq& request, ::eraftkv::RequestVoteResp* response) {
@@ -201,6 +203,34 @@ void ERaftKv::Stub::experimental_async::ClusterConfigChange(::grpc::ClientContex
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::eraftkv::ClusterConfigChangeResp>::Create(channel_.get(), cq, rpcmethod_ClusterConfigChange_, context, request, false);
 }
 
+::grpc::Status ERaftKv::Stub::ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::eraftkv::ServerStatsResp* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_ServerStats_, context, request, response);
+}
+
+void ERaftKv::Stub::experimental_async::ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_ServerStats_, context, request, response, std::move(f));
+}
+
+void ERaftKv::Stub::experimental_async::ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_ServerStats_, context, request, response, std::move(f));
+}
+
+void ERaftKv::Stub::experimental_async::ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_ServerStats_, context, request, response, reactor);
+}
+
+void ERaftKv::Stub::experimental_async::ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_ServerStats_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>* ERaftKv::Stub::AsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::eraftkv::ServerStatsResp>::Create(channel_.get(), cq, rpcmethod_ServerStats_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>* ERaftKv::Stub::PrepareAsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::eraftkv::ServerStatsResp>::Create(channel_.get(), cq, rpcmethod_ServerStats_, context, request, false);
+}
+
 ERaftKv::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ERaftKv_method_names[0],
@@ -232,6 +262,11 @@ ERaftKv::Service::Service() {
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ERaftKv::Service, ::eraftkv::ClusterConfigChangeReq, ::eraftkv::ClusterConfigChangeResp>(
           std::mem_fn(&ERaftKv::Service::ClusterConfigChange), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ERaftKv_method_names[6],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ERaftKv::Service, ::eraftkv::ServerStatsReq, ::eraftkv::ServerStatsResp>(
+          std::mem_fn(&ERaftKv::Service::ServerStats), this)));
 }
 
 ERaftKv::Service::~Service() {
@@ -273,6 +308,13 @@ ERaftKv::Service::~Service() {
 }
 
 ::grpc::Status ERaftKv::Service::ClusterConfigChange(::grpc::ServerContext* context, const ::eraftkv::ClusterConfigChangeReq* request, ::eraftkv::ClusterConfigChangeResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ERaftKv::Service::ServerStats(::grpc::ServerContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response) {
   (void) context;
   (void) request;
   (void) response;

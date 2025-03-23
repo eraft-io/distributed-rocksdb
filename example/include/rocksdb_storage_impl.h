@@ -119,6 +119,8 @@ class RocksDBStorageImpl : public Storage {
    */
   EStatus DelKV(std::string key);
 
+  DBStats GetDBStats();
+
   /**
    * @brief Construct a new RocksDB Storage Impl object
    *
@@ -152,6 +154,11 @@ class RocksDBStorageImpl : public Storage {
    *
    */
   rocksdb::DB* kv_db_;
+
+  /**
+   * 
+   */
+  std::shared_ptr<rocksdb::Statistics> stats_;
 };
 
 
@@ -282,4 +289,6 @@ class RocksDBSingleLogStorageImpl : public LogStore {
 
 
   rocksdb::DB* log_db_;
+
+  rocksdb::Statistics* stats_;
 };

@@ -1,17 +1,6 @@
-## ERaft
-ERaft is a raft algorithm library with rich features, based on the algorithm library, we provided an example implementation of a distributed KV storage system.
+# DistributedRocksdb
 
-> :warning: ERaft is still being developed, you can find a golang version for ebooks - [Distributed Data Services](https://3.cn/1W-jAWMR) at branch [eraftbook](https://github.com/eraft-io/eraft/tree/eraftbook) 
-
-## ERaft Features
-- Strong and consistent data storage ensures secure and reliable data persistence in distributed systems.
-- Support KV data type operations, including PUT, GET, DEL, and SCAN operations on keys. When users operate on cluster data, they must ensure the persistence of the operation and the sequential consistency of reading and writing.
-- Dynamically configure the cluster, including adding and deleting nodes, adding and deleting cluster sharding configurations, including which keyrange the cluster sharding is responsible for.
-- Support for snapshot taking with the raft to compress and merge logs. During the snapshot, it is required to not block data read and write.
-- Support switching to a specifying leader.
-- Raft elections support PreVote, and newly added nodes do not participate in the election by tracking data to avoid triggering unnecessary elections.
-- Raft read optimization: adding a read queue ensures that the leader node returns a read request after submitting it, and unnecessary logs are not written.
-- Support data migration, multi-shard scale out.
+This is a project to build a distributed rocksdb kv storage engine.
 
 # Getting Started
 

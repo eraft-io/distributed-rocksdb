@@ -31,12 +31,13 @@
  *
  */
 #include "client.h"
+#include "google/protobuf/util/json_util.h"
 
 Client::Client() {
   this->metaserver_addrs_ = StringUtil::Split(DEFAULT_METASERVER_ADDRS, ',');
   bool is_chan_create_ok = false;
   for (auto metaserver_addr : this->metaserver_addrs_) {
-    SPDLOG_INFO("init rpc link to {} ", metaserver_addr);
+    SPDLOG_DEBUG("init rpc link to {} ", metaserver_addr);
     auto chan_ = grpc::CreateChannel(metaserver_addr,
                                      grpc::InsecureChannelCredentials());
     if (chan_ != nullptr) {
@@ -55,7 +56,7 @@ Client::Client() {
 Client::Client(std::string& metaserver_addrs) {
   this->metaserver_addrs_ = StringUtil::Split(metaserver_addrs, ',');
   for (auto metaserver_addr : this->metaserver_addrs_) {
-    SPDLOG_INFO("init rpc link to {} ", metaserver_addr);
+    SPDLOG_DEBUG("init rpc link to {} ", metaserver_addr);
     auto                           chan_ = grpc::CreateChannel(metaserver_addr,
                                      grpc::InsecureChannelCredentials());
     std::unique_ptr<ERaftKv::Stub> stub_(ERaftKv::NewStub(chan_));
@@ -85,6 +86,7 @@ bool Client::SetServerGroupSlotsToMeta(int64_t start_slot,
   eraftkv::ClusterConfigChangeResp resp;
   auto st = this->meta_leader_stub_->ClusterConfigChange(&context, req, &resp);
   assert(st.ok());
+  ProtoMessageToJsonString(resp);
   this->command_id_++;
   return resp.success();
 }
@@ -116,6 +118,7 @@ bool Client::AddServerGroupToMeta(int64_t     shard_id,
         this->meta_leader_stub_->ClusterConfigChange(&context, req, &resp);
     assert(st.ok());
   }
+  ProtoMessageToJsonString(resp);
   this->command_id_++;
   return resp.success();
 }
@@ -131,8 +134,20 @@ bool Client::RemoveServerGroupFromMeta(int64_t group_shard_id) {
   auto st = this->meta_leader_stub_->ClusterConfigChange(&context, req, &resp);
   assert(st.ok());
   this->command_id_;
+  ProtoMessageToJsonString(resp);
   return resp.success();
 }
+
+std::string Client::ProtoMessageToJsonString(google::protobuf::Message& msg) {
+  std::string json_output;
+  google::protobuf::util::JsonPrintOptions options;
+  options.add_whitespace = true;
+  options.always_print_primitive_fields = true;
+  auto status = google::protobuf::util::MessageToJsonString(msg, &json_output, options);
+  std::cout << json_output << std::endl;
+  return json_output;
+}
+
 
 std::map<int64_t, eraftkv::ShardGroup> Client::GetServerGroupsFromMeta() {
   ClientContext                   context;
@@ -149,7 +164,7 @@ std::map<int64_t, eraftkv::ShardGroup> Client::GetServerGroupsFromMeta() {
   for (auto shard_group : resp.shard_group()) {
     shardgroups[shard_group.id()] = shard_group;
   }
-  SPDLOG_INFO("get server groups resp {}", resp.DebugString());
+  ProtoMessageToJsonString(resp);
   return std::move(shardgroups);
 }
 
@@ -206,7 +221,7 @@ void Client::UpdateKvServerLeaderStubByPartitionKey(std::string partition_key) {
               server.address(), grpc::InsecureChannelCredentials());
           std::unique_ptr<ERaftKv::Stub> kv_stub(ERaftKv::NewStub(new_chan_));
           kv_svr_stubs_[server.address()] = std::move(kv_stub);
-          SPDLOG_INFO("init rpc link to {} ", server.address());
+          SPDLOG_DEBUG("init rpc link to {} ", server.address());
           ClientContext                   query_kv_members_context;
           eraftkv::ClusterConfigChangeReq query_kv_members_req;
           query_kv_members_req.set_change_type(
@@ -232,7 +247,7 @@ void Client::UpdateKvServerLeaderStubByPartitionKey(std::string partition_key) {
       }
     }
   }
-  SPDLOG_INFO("kv server leader {}", kv_leader_address);
+  SPDLOG_DEBUG("kv server leader {}", kv_leader_address);
   auto kv_leader_chan = grpc::CreateChannel(kv_leader_address,
                                             grpc::InsecureChannelCredentials());
   this->kv_leader_stub_ = std::move(ERaftKv::NewStub(kv_leader_chan));
@@ -253,6 +268,7 @@ bool Client::PutKV(std::string k, std::string v) {
       this->kv_leader_stub_->ProcessRWOperation(&op_context, op_req, &op_resp);
   if (st.ok()) {
     this->command_id_++;
+    ProtoMessageToJsonString(op_resp);
     return true;
   } else {
     return false;
@@ -275,16 +291,43 @@ std::pair<std::string, std::string> Client::GetKV(std::string k) {
   this->command_id_++;
   auto key = op_resp.ops(0).key();
   auto val = op_resp.ops(0).value();
+  ProtoMessageToJsonString(op_resp);
   return std::make_pair<std::string, std::string>(std::move(key),
                                                   std::move(val));
 }
 
-void Client::RunBench(int64_t N) {
-  auto partition_key = StringUtil::RandStr(256);
-  this->UpdateKvServerLeaderStubByPartitionKey(partition_key);
+std::string Client::QueryStats() {
+    ClientContext                op_context;
+    eraftkv::ServerStatsReq req;
+    eraftkv::ServerStatsResp resp;
+    req.set_client_id(this->client_id_);
+      auto st =
+      this->kv_leader_stub_->ServerStats(&op_context, req, &resp);
+    assert(st.ok());
+      SPDLOG_DEBUG(resp.DebugString());
+    ProtoMessageToJsonString(resp);
+  return std::move(resp.DebugString());
+}
+
+void Client::RunRwBench(int64_t N) {
+  std::vector<std::string> bench_keys;
+  std::vector<std::string> bench_vals;
+
   for (int i = 0; i < N; i++) {
-    auto value = StringUtil::RandStr(256);
-    this->PutKV(partition_key, value);
+    bench_keys.push_back(StringUtil::RandStr(256));
+    bench_vals.push_back(StringUtil::RandStr(256));
+  }
+
+  // write test
+  for (int i = 0; i < bench_keys.size(); i++) {
+    this->UpdateKvServerLeaderStubByPartitionKey(bench_keys[i]);
+    this->PutKV(bench_keys[i], bench_vals[i]);
+  }
+
+  // read test
+  for (int i = 0; i < bench_keys.size(); i++) {
+    this->UpdateKvServerLeaderStubByPartitionKey(bench_keys[i]);
+    this->GetKV(bench_keys[i]);
   }
 }
 

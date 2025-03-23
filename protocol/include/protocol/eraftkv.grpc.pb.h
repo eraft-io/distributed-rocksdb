@@ -4,7 +4,7 @@
 #ifndef GRPC_eraftkv_2eproto__INCLUDED
 #define GRPC_eraftkv_2eproto__INCLUDED
 
-#include "protocol/eraftkv.pb.h"
+#include "eraftkv.pb.h"
 
 #include <functional>
 #include <grpc/impl/codegen/port_platform.h>
@@ -80,6 +80,13 @@ class ERaftKv final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ClusterConfigChangeResp>> PrepareAsyncClusterConfigChange(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ClusterConfigChangeResp>>(PrepareAsyncClusterConfigChangeRaw(context, request, cq));
     }
+    virtual ::grpc::Status ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::eraftkv::ServerStatsResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>> AsyncServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>>(AsyncServerStatsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>> PrepareAsyncServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>>(PrepareAsyncServerStatsRaw(context, request, cq));
+    }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
@@ -148,6 +155,18 @@ class ERaftKv final {
       #else
       virtual void ClusterConfigChange(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ClusterConfigChangeResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
+      virtual void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     typedef class experimental_async_interface async_interface;
@@ -170,6 +189,8 @@ class ERaftKv final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ClientOperationResp>* PrepareAsyncProcessRWOperationRaw(::grpc::ClientContext* context, const ::eraftkv::ClientOperationReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ClusterConfigChangeResp>* AsyncClusterConfigChangeRaw(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ClusterConfigChangeResp>* PrepareAsyncClusterConfigChangeRaw(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>* AsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::eraftkv::ServerStatsResp>* PrepareAsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -217,6 +238,13 @@ class ERaftKv final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ClusterConfigChangeResp>> PrepareAsyncClusterConfigChange(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ClusterConfigChangeResp>>(PrepareAsyncClusterConfigChangeRaw(context, request, cq));
+    }
+    ::grpc::Status ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::eraftkv::ServerStatsResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>> AsyncServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>>(AsyncServerStatsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>> PrepareAsyncServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>>(PrepareAsyncServerStatsRaw(context, request, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
@@ -286,6 +314,18 @@ class ERaftKv final {
       #else
       void ClusterConfigChange(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ClusterConfigChangeResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
+      void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)>) override;
+      void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void ServerStats(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void ServerStats(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::eraftkv::ServerStatsResp* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
      private:
       friend class Stub;
       explicit experimental_async(Stub* stub): stub_(stub) { }
@@ -310,12 +350,15 @@ class ERaftKv final {
     ::grpc::ClientAsyncResponseReader< ::eraftkv::ClientOperationResp>* PrepareAsyncProcessRWOperationRaw(::grpc::ClientContext* context, const ::eraftkv::ClientOperationReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::eraftkv::ClusterConfigChangeResp>* AsyncClusterConfigChangeRaw(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::eraftkv::ClusterConfigChangeResp>* PrepareAsyncClusterConfigChangeRaw(::grpc::ClientContext* context, const ::eraftkv::ClusterConfigChangeReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>* AsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::eraftkv::ServerStatsResp>* PrepareAsyncServerStatsRaw(::grpc::ClientContext* context, const ::eraftkv::ServerStatsReq& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_RequestVote_;
     const ::grpc::internal::RpcMethod rpcmethod_AppendEntries_;
     const ::grpc::internal::RpcMethod rpcmethod_Snapshot_;
     const ::grpc::internal::RpcMethod rpcmethod_PutSSTFile_;
     const ::grpc::internal::RpcMethod rpcmethod_ProcessRWOperation_;
     const ::grpc::internal::RpcMethod rpcmethod_ClusterConfigChange_;
+    const ::grpc::internal::RpcMethod rpcmethod_ServerStats_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -329,6 +372,7 @@ class ERaftKv final {
     virtual ::grpc::Status PutSSTFile(::grpc::ServerContext* context, ::grpc::ServerReader< ::eraftkv::SSTFileContent>* reader, ::eraftkv::SSTFileId* response);
     virtual ::grpc::Status ProcessRWOperation(::grpc::ServerContext* context, const ::eraftkv::ClientOperationReq* request, ::eraftkv::ClientOperationResp* response);
     virtual ::grpc::Status ClusterConfigChange(::grpc::ServerContext* context, const ::eraftkv::ClusterConfigChangeReq* request, ::eraftkv::ClusterConfigChangeResp* response);
+    virtual ::grpc::Status ServerStats(::grpc::ServerContext* context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_RequestVote : public BaseClass {
@@ -450,7 +494,27 @@ class ERaftKv final {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_RequestVote<WithAsyncMethod_AppendEntries<WithAsyncMethod_Snapshot<WithAsyncMethod_PutSSTFile<WithAsyncMethod_ProcessRWOperation<WithAsyncMethod_ClusterConfigChange<Service > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ServerStats() {
+      ::grpc::Service::MarkMethodAsync(6);
+    }
+    ~WithAsyncMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestServerStats(::grpc::ServerContext* context, ::eraftkv::ServerStatsReq* request, ::grpc::ServerAsyncResponseWriter< ::eraftkv::ServerStatsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_RequestVote<WithAsyncMethod_AppendEntries<WithAsyncMethod_Snapshot<WithAsyncMethod_PutSSTFile<WithAsyncMethod_ProcessRWOperation<WithAsyncMethod_ClusterConfigChange<WithAsyncMethod_ServerStats<Service > > > > > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod_RequestVote : public BaseClass {
    private:
@@ -724,11 +788,58 @@ class ERaftKv final {
     #endif
       { return nullptr; }
   };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_ServerStats() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(6,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::eraftkv::ServerStatsReq, ::eraftkv::ServerStatsResp>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::eraftkv::ServerStatsReq* request, ::eraftkv::ServerStatsResp* response) { return this->ServerStats(context, request, response); }));}
+    void SetMessageAllocatorFor_ServerStats(
+        ::grpc::experimental::MessageAllocator< ::eraftkv::ServerStatsReq, ::eraftkv::ServerStatsResp>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(6);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::eraftkv::ServerStatsReq, ::eraftkv::ServerStatsResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* ServerStats(
+      ::grpc::CallbackServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* ServerStats(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/)
+    #endif
+      { return nullptr; }
+  };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod_RequestVote<ExperimentalWithCallbackMethod_AppendEntries<ExperimentalWithCallbackMethod_Snapshot<ExperimentalWithCallbackMethod_PutSSTFile<ExperimentalWithCallbackMethod_ProcessRWOperation<ExperimentalWithCallbackMethod_ClusterConfigChange<Service > > > > > > CallbackService;
+  typedef ExperimentalWithCallbackMethod_RequestVote<ExperimentalWithCallbackMethod_AppendEntries<ExperimentalWithCallbackMethod_Snapshot<ExperimentalWithCallbackMethod_PutSSTFile<ExperimentalWithCallbackMethod_ProcessRWOperation<ExperimentalWithCallbackMethod_ClusterConfigChange<ExperimentalWithCallbackMethod_ServerStats<Service > > > > > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod_RequestVote<ExperimentalWithCallbackMethod_AppendEntries<ExperimentalWithCallbackMethod_Snapshot<ExperimentalWithCallbackMethod_PutSSTFile<ExperimentalWithCallbackMethod_ProcessRWOperation<ExperimentalWithCallbackMethod_ClusterConfigChange<Service > > > > > > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod_RequestVote<ExperimentalWithCallbackMethod_AppendEntries<ExperimentalWithCallbackMethod_Snapshot<ExperimentalWithCallbackMethod_PutSSTFile<ExperimentalWithCallbackMethod_ProcessRWOperation<ExperimentalWithCallbackMethod_ClusterConfigChange<ExperimentalWithCallbackMethod_ServerStats<Service > > > > > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_RequestVote : public BaseClass {
    private:
@@ -827,6 +938,23 @@ class ERaftKv final {
     }
     // disable synchronous version of this method
     ::grpc::Status ClusterConfigChange(::grpc::ServerContext* /*context*/, const ::eraftkv::ClusterConfigChangeReq* /*request*/, ::eraftkv::ClusterConfigChangeResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ServerStats() {
+      ::grpc::Service::MarkMethodGeneric(6);
+    }
+    ~WithGenericMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -949,6 +1077,26 @@ class ERaftKv final {
     }
     void RequestClusterConfigChange(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ServerStats() {
+      ::grpc::Service::MarkMethodRaw(6);
+    }
+    ~WithRawMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestServerStats(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1180,6 +1328,44 @@ class ERaftKv final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_ServerStats() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(6,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ServerStats(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* ServerStats(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* ServerStats(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_RequestVote : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -1279,9 +1465,29 @@ class ERaftKv final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedClusterConfigChange(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::eraftkv::ClusterConfigChangeReq,::eraftkv::ClusterConfigChangeResp>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_Snapshot<WithStreamedUnaryMethod_ProcessRWOperation<WithStreamedUnaryMethod_ClusterConfigChange<Service > > > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_ServerStats : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ServerStats() {
+      ::grpc::Service::MarkMethodStreamed(6,
+        new ::grpc::internal::StreamedUnaryHandler< ::eraftkv::ServerStatsReq, ::eraftkv::ServerStatsResp>(std::bind(&WithStreamedUnaryMethod_ServerStats<BaseClass>::StreamedServerStats, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_ServerStats() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ServerStats(::grpc::ServerContext* /*context*/, const ::eraftkv::ServerStatsReq* /*request*/, ::eraftkv::ServerStatsResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedServerStats(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::eraftkv::ServerStatsReq,::eraftkv::ServerStatsResp>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_Snapshot<WithStreamedUnaryMethod_ProcessRWOperation<WithStreamedUnaryMethod_ClusterConfigChange<WithStreamedUnaryMethod_ServerStats<Service > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_Snapshot<WithStreamedUnaryMethod_ProcessRWOperation<WithStreamedUnaryMethod_ClusterConfigChange<Service > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_Snapshot<WithStreamedUnaryMethod_ProcessRWOperation<WithStreamedUnaryMethod_ClusterConfigChange<WithStreamedUnaryMethod_ServerStats<Service > > > > > > StreamedService;
 };
 
 }  // namespace eraftkv

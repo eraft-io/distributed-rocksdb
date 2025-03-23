@@ -48,7 +48,7 @@ struct TableStruct_eraftkv_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[17]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[19]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -95,6 +95,12 @@ extern SSTFileIdDefaultTypeInternal _SSTFileId_default_instance_;
 class Server;
 class ServerDefaultTypeInternal;
 extern ServerDefaultTypeInternal _Server_default_instance_;
+class ServerStatsReq;
+class ServerStatsReqDefaultTypeInternal;
+extern ServerStatsReqDefaultTypeInternal _ServerStatsReq_default_instance_;
+class ServerStatsResp;
+class ServerStatsRespDefaultTypeInternal;
+extern ServerStatsRespDefaultTypeInternal _ServerStatsResp_default_instance_;
 class ShardGroup;
 class ShardGroupDefaultTypeInternal;
 extern ShardGroupDefaultTypeInternal _ShardGroup_default_instance_;
@@ -122,6 +128,8 @@ template<> ::eraftkv::RequestVoteResp* Arena::CreateMaybeMessage<::eraftkv::Requ
 template<> ::eraftkv::SSTFileContent* Arena::CreateMaybeMessage<::eraftkv::SSTFileContent>(Arena*);
 template<> ::eraftkv::SSTFileId* Arena::CreateMaybeMessage<::eraftkv::SSTFileId>(Arena*);
 template<> ::eraftkv::Server* Arena::CreateMaybeMessage<::eraftkv::Server>(Arena*);
+template<> ::eraftkv::ServerStatsReq* Arena::CreateMaybeMessage<::eraftkv::ServerStatsReq>(Arena*);
+template<> ::eraftkv::ServerStatsResp* Arena::CreateMaybeMessage<::eraftkv::ServerStatsResp>(Arena*);
 template<> ::eraftkv::ShardGroup* Arena::CreateMaybeMessage<::eraftkv::ShardGroup>(Arena*);
 template<> ::eraftkv::Slot* Arena::CreateMaybeMessage<::eraftkv::Slot>(Arena*);
 template<> ::eraftkv::SnapshotReq* Arena::CreateMaybeMessage<::eraftkv::SnapshotReq>(Arena*);
@@ -3359,6 +3367,456 @@ class SSTFileContent :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_eraftkv_2eproto;
 };
+// -------------------------------------------------------------------
+
+class ServerStatsReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:eraftkv.ServerStatsReq) */ {
+ public:
+  ServerStatsReq();
+  virtual ~ServerStatsReq();
+
+  ServerStatsReq(const ServerStatsReq& from);
+  ServerStatsReq(ServerStatsReq&& from) noexcept
+    : ServerStatsReq() {
+    *this = ::std::move(from);
+  }
+
+  inline ServerStatsReq& operator=(const ServerStatsReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ServerStatsReq& operator=(ServerStatsReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const ServerStatsReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ServerStatsReq* internal_default_instance() {
+    return reinterpret_cast<const ServerStatsReq*>(
+               &_ServerStatsReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(ServerStatsReq& a, ServerStatsReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ServerStatsReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ServerStatsReq* New() const final {
+    return CreateMaybeMessage<ServerStatsReq>(nullptr);
+  }
+
+  ServerStatsReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ServerStatsReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ServerStatsReq& from);
+  void MergeFrom(const ServerStatsReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ServerStatsReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "eraftkv.ServerStatsReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_eraftkv_2eproto);
+    return ::descriptor_table_eraftkv_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kClientIdFieldNumber = 1,
+  };
+  // string client_id = 1;
+  void clear_client_id();
+  const std::string& client_id() const;
+  void set_client_id(const std::string& value);
+  void set_client_id(std::string&& value);
+  void set_client_id(const char* value);
+  void set_client_id(const char* value, size_t size);
+  std::string* mutable_client_id();
+  std::string* release_client_id();
+  void set_allocated_client_id(std::string* client_id);
+  private:
+  const std::string& _internal_client_id() const;
+  void _internal_set_client_id(const std::string& value);
+  std::string* _internal_mutable_client_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:eraftkv.ServerStatsReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr client_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_eraftkv_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ServerStatsResp :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:eraftkv.ServerStatsResp) */ {
+ public:
+  ServerStatsResp();
+  virtual ~ServerStatsResp();
+
+  ServerStatsResp(const ServerStatsResp& from);
+  ServerStatsResp(ServerStatsResp&& from) noexcept
+    : ServerStatsResp() {
+    *this = ::std::move(from);
+  }
+
+  inline ServerStatsResp& operator=(const ServerStatsResp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ServerStatsResp& operator=(ServerStatsResp&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const ServerStatsResp& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ServerStatsResp* internal_default_instance() {
+    return reinterpret_cast<const ServerStatsResp*>(
+               &_ServerStatsResp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(ServerStatsResp& a, ServerStatsResp& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ServerStatsResp* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ServerStatsResp* New() const final {
+    return CreateMaybeMessage<ServerStatsResp>(nullptr);
+  }
+
+  ServerStatsResp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ServerStatsResp>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ServerStatsResp& from);
+  void MergeFrom(const ServerStatsResp& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ServerStatsResp* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "eraftkv.ServerStatsResp";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_eraftkv_2eproto);
+    return ::descriptor_table_eraftkv_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTotalWriteCntFieldNumber = 1,
+    kTotalReadCntFieldNumber = 2,
+    kTotalWriteBytesFieldNumber = 3,
+    kTotalReadBytesFieldNumber = 4,
+    kBlockCacheMissFieldNumber = 5,
+    kBlockCacheHitFieldNumber = 6,
+    kBlockCacheWriteBytesFieldNumber = 7,
+    kBlockCacheReadBytesFieldNumber = 8,
+    kMemtableHitFieldNumber = 9,
+    kMemtableMissFieldNumber = 10,
+    kGetHitL0FieldNumber = 11,
+    kGetHitL1FieldNumber = 12,
+    kGetHitL2AndUpFieldNumber = 13,
+    kRowCacheHitFieldNumber = 14,
+    kRowCacheMissFieldNumber = 15,
+    kCompactReadBytesFieldNumber = 16,
+    kCompactWriteBytesFieldNumber = 17,
+    kFlushWriteBytesFieldNumber = 18,
+  };
+  // int64 total_write_cnt = 1;
+  void clear_total_write_cnt();
+  ::PROTOBUF_NAMESPACE_ID::int64 total_write_cnt() const;
+  void set_total_write_cnt(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_total_write_cnt() const;
+  void _internal_set_total_write_cnt(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 total_read_cnt = 2;
+  void clear_total_read_cnt();
+  ::PROTOBUF_NAMESPACE_ID::int64 total_read_cnt() const;
+  void set_total_read_cnt(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_total_read_cnt() const;
+  void _internal_set_total_read_cnt(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 total_write_bytes = 3;
+  void clear_total_write_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 total_write_bytes() const;
+  void set_total_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_total_write_bytes() const;
+  void _internal_set_total_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 total_read_bytes = 4;
+  void clear_total_read_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 total_read_bytes() const;
+  void set_total_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_total_read_bytes() const;
+  void _internal_set_total_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 block_cache_miss = 5;
+  void clear_block_cache_miss();
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_miss() const;
+  void set_block_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_block_cache_miss() const;
+  void _internal_set_block_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 block_cache_hit = 6;
+  void clear_block_cache_hit();
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_hit() const;
+  void set_block_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_block_cache_hit() const;
+  void _internal_set_block_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 block_cache_write_bytes = 7;
+  void clear_block_cache_write_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_write_bytes() const;
+  void set_block_cache_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_block_cache_write_bytes() const;
+  void _internal_set_block_cache_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 block_cache_read_bytes = 8;
+  void clear_block_cache_read_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_read_bytes() const;
+  void set_block_cache_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_block_cache_read_bytes() const;
+  void _internal_set_block_cache_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 memtable_hit = 9;
+  void clear_memtable_hit();
+  ::PROTOBUF_NAMESPACE_ID::int64 memtable_hit() const;
+  void set_memtable_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_memtable_hit() const;
+  void _internal_set_memtable_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 memtable_miss = 10;
+  void clear_memtable_miss();
+  ::PROTOBUF_NAMESPACE_ID::int64 memtable_miss() const;
+  void set_memtable_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_memtable_miss() const;
+  void _internal_set_memtable_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 get_hit_l0 = 11;
+  void clear_get_hit_l0();
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l0() const;
+  void set_get_hit_l0(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_get_hit_l0() const;
+  void _internal_set_get_hit_l0(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 get_hit_l1 = 12;
+  void clear_get_hit_l1();
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l1() const;
+  void set_get_hit_l1(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_get_hit_l1() const;
+  void _internal_set_get_hit_l1(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 get_hit_l2_and_up = 13;
+  void clear_get_hit_l2_and_up();
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l2_and_up() const;
+  void set_get_hit_l2_and_up(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_get_hit_l2_and_up() const;
+  void _internal_set_get_hit_l2_and_up(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 row_cache_hit = 14;
+  void clear_row_cache_hit();
+  ::PROTOBUF_NAMESPACE_ID::int64 row_cache_hit() const;
+  void set_row_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_row_cache_hit() const;
+  void _internal_set_row_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 row_cache_miss = 15;
+  void clear_row_cache_miss();
+  ::PROTOBUF_NAMESPACE_ID::int64 row_cache_miss() const;
+  void set_row_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_row_cache_miss() const;
+  void _internal_set_row_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 compact_read_bytes = 16;
+  void clear_compact_read_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 compact_read_bytes() const;
+  void set_compact_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_compact_read_bytes() const;
+  void _internal_set_compact_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 compact_write_bytes = 17;
+  void clear_compact_write_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 compact_write_bytes() const;
+  void set_compact_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_compact_write_bytes() const;
+  void _internal_set_compact_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 flush_write_bytes = 18;
+  void clear_flush_write_bytes();
+  ::PROTOBUF_NAMESPACE_ID::int64 flush_write_bytes() const;
+  void set_flush_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_flush_write_bytes() const;
+  void _internal_set_flush_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:eraftkv.ServerStatsResp)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::int64 total_write_cnt_;
+  ::PROTOBUF_NAMESPACE_ID::int64 total_read_cnt_;
+  ::PROTOBUF_NAMESPACE_ID::int64 total_write_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 total_read_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_miss_;
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_hit_;
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_write_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 block_cache_read_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 memtable_hit_;
+  ::PROTOBUF_NAMESPACE_ID::int64 memtable_miss_;
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l0_;
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l1_;
+  ::PROTOBUF_NAMESPACE_ID::int64 get_hit_l2_and_up_;
+  ::PROTOBUF_NAMESPACE_ID::int64 row_cache_hit_;
+  ::PROTOBUF_NAMESPACE_ID::int64 row_cache_miss_;
+  ::PROTOBUF_NAMESPACE_ID::int64 compact_read_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 compact_write_bytes_;
+  ::PROTOBUF_NAMESPACE_ID::int64 flush_write_bytes_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_eraftkv_2eproto;
+};
 // ===================================================================
 
 
@@ -5748,9 +6206,441 @@ inline void SSTFileContent::set_allocated_content(std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:eraftkv.SSTFileContent.content)
 }
 
+// -------------------------------------------------------------------
+
+// ServerStatsReq
+
+// string client_id = 1;
+inline void ServerStatsReq::clear_client_id() {
+  client_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ServerStatsReq::client_id() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsReq.client_id)
+  return _internal_client_id();
+}
+inline void ServerStatsReq::set_client_id(const std::string& value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsReq.client_id)
+}
+inline std::string* ServerStatsReq::mutable_client_id() {
+  // @@protoc_insertion_point(field_mutable:eraftkv.ServerStatsReq.client_id)
+  return _internal_mutable_client_id();
+}
+inline const std::string& ServerStatsReq::_internal_client_id() const {
+  return client_id_.GetNoArena();
+}
+inline void ServerStatsReq::_internal_set_client_id(const std::string& value) {
+  
+  client_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ServerStatsReq::set_client_id(std::string&& value) {
+  
+  client_id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:eraftkv.ServerStatsReq.client_id)
+}
+inline void ServerStatsReq::set_client_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  client_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:eraftkv.ServerStatsReq.client_id)
+}
+inline void ServerStatsReq::set_client_id(const char* value, size_t size) {
+  
+  client_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:eraftkv.ServerStatsReq.client_id)
+}
+inline std::string* ServerStatsReq::_internal_mutable_client_id() {
+  
+  return client_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ServerStatsReq::release_client_id() {
+  // @@protoc_insertion_point(field_release:eraftkv.ServerStatsReq.client_id)
+  
+  return client_id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ServerStatsReq::set_allocated_client_id(std::string* client_id) {
+  if (client_id != nullptr) {
+    
+  } else {
+    
+  }
+  client_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), client_id);
+  // @@protoc_insertion_point(field_set_allocated:eraftkv.ServerStatsReq.client_id)
+}
+
+// -------------------------------------------------------------------
+
+// ServerStatsResp
+
+// int64 total_write_cnt = 1;
+inline void ServerStatsResp::clear_total_write_cnt() {
+  total_write_cnt_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_total_write_cnt() const {
+  return total_write_cnt_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::total_write_cnt() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.total_write_cnt)
+  return _internal_total_write_cnt();
+}
+inline void ServerStatsResp::_internal_set_total_write_cnt(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  total_write_cnt_ = value;
+}
+inline void ServerStatsResp::set_total_write_cnt(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_total_write_cnt(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.total_write_cnt)
+}
+
+// int64 total_read_cnt = 2;
+inline void ServerStatsResp::clear_total_read_cnt() {
+  total_read_cnt_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_total_read_cnt() const {
+  return total_read_cnt_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::total_read_cnt() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.total_read_cnt)
+  return _internal_total_read_cnt();
+}
+inline void ServerStatsResp::_internal_set_total_read_cnt(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  total_read_cnt_ = value;
+}
+inline void ServerStatsResp::set_total_read_cnt(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_total_read_cnt(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.total_read_cnt)
+}
+
+// int64 total_write_bytes = 3;
+inline void ServerStatsResp::clear_total_write_bytes() {
+  total_write_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_total_write_bytes() const {
+  return total_write_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::total_write_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.total_write_bytes)
+  return _internal_total_write_bytes();
+}
+inline void ServerStatsResp::_internal_set_total_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  total_write_bytes_ = value;
+}
+inline void ServerStatsResp::set_total_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_total_write_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.total_write_bytes)
+}
+
+// int64 total_read_bytes = 4;
+inline void ServerStatsResp::clear_total_read_bytes() {
+  total_read_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_total_read_bytes() const {
+  return total_read_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::total_read_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.total_read_bytes)
+  return _internal_total_read_bytes();
+}
+inline void ServerStatsResp::_internal_set_total_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  total_read_bytes_ = value;
+}
+inline void ServerStatsResp::set_total_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_total_read_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.total_read_bytes)
+}
+
+// int64 block_cache_miss = 5;
+inline void ServerStatsResp::clear_block_cache_miss() {
+  block_cache_miss_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_block_cache_miss() const {
+  return block_cache_miss_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::block_cache_miss() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.block_cache_miss)
+  return _internal_block_cache_miss();
+}
+inline void ServerStatsResp::_internal_set_block_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  block_cache_miss_ = value;
+}
+inline void ServerStatsResp::set_block_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_block_cache_miss(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.block_cache_miss)
+}
+
+// int64 block_cache_hit = 6;
+inline void ServerStatsResp::clear_block_cache_hit() {
+  block_cache_hit_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_block_cache_hit() const {
+  return block_cache_hit_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::block_cache_hit() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.block_cache_hit)
+  return _internal_block_cache_hit();
+}
+inline void ServerStatsResp::_internal_set_block_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  block_cache_hit_ = value;
+}
+inline void ServerStatsResp::set_block_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_block_cache_hit(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.block_cache_hit)
+}
+
+// int64 block_cache_write_bytes = 7;
+inline void ServerStatsResp::clear_block_cache_write_bytes() {
+  block_cache_write_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_block_cache_write_bytes() const {
+  return block_cache_write_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::block_cache_write_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.block_cache_write_bytes)
+  return _internal_block_cache_write_bytes();
+}
+inline void ServerStatsResp::_internal_set_block_cache_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  block_cache_write_bytes_ = value;
+}
+inline void ServerStatsResp::set_block_cache_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_block_cache_write_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.block_cache_write_bytes)
+}
+
+// int64 block_cache_read_bytes = 8;
+inline void ServerStatsResp::clear_block_cache_read_bytes() {
+  block_cache_read_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_block_cache_read_bytes() const {
+  return block_cache_read_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::block_cache_read_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.block_cache_read_bytes)
+  return _internal_block_cache_read_bytes();
+}
+inline void ServerStatsResp::_internal_set_block_cache_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  block_cache_read_bytes_ = value;
+}
+inline void ServerStatsResp::set_block_cache_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_block_cache_read_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.block_cache_read_bytes)
+}
+
+// int64 memtable_hit = 9;
+inline void ServerStatsResp::clear_memtable_hit() {
+  memtable_hit_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_memtable_hit() const {
+  return memtable_hit_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::memtable_hit() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.memtable_hit)
+  return _internal_memtable_hit();
+}
+inline void ServerStatsResp::_internal_set_memtable_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  memtable_hit_ = value;
+}
+inline void ServerStatsResp::set_memtable_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_memtable_hit(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.memtable_hit)
+}
+
+// int64 memtable_miss = 10;
+inline void ServerStatsResp::clear_memtable_miss() {
+  memtable_miss_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_memtable_miss() const {
+  return memtable_miss_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::memtable_miss() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.memtable_miss)
+  return _internal_memtable_miss();
+}
+inline void ServerStatsResp::_internal_set_memtable_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  memtable_miss_ = value;
+}
+inline void ServerStatsResp::set_memtable_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_memtable_miss(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.memtable_miss)
+}
+
+// int64 get_hit_l0 = 11;
+inline void ServerStatsResp::clear_get_hit_l0() {
+  get_hit_l0_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_get_hit_l0() const {
+  return get_hit_l0_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::get_hit_l0() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.get_hit_l0)
+  return _internal_get_hit_l0();
+}
+inline void ServerStatsResp::_internal_set_get_hit_l0(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  get_hit_l0_ = value;
+}
+inline void ServerStatsResp::set_get_hit_l0(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_get_hit_l0(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.get_hit_l0)
+}
+
+// int64 get_hit_l1 = 12;
+inline void ServerStatsResp::clear_get_hit_l1() {
+  get_hit_l1_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_get_hit_l1() const {
+  return get_hit_l1_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::get_hit_l1() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.get_hit_l1)
+  return _internal_get_hit_l1();
+}
+inline void ServerStatsResp::_internal_set_get_hit_l1(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  get_hit_l1_ = value;
+}
+inline void ServerStatsResp::set_get_hit_l1(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_get_hit_l1(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.get_hit_l1)
+}
+
+// int64 get_hit_l2_and_up = 13;
+inline void ServerStatsResp::clear_get_hit_l2_and_up() {
+  get_hit_l2_and_up_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_get_hit_l2_and_up() const {
+  return get_hit_l2_and_up_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::get_hit_l2_and_up() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.get_hit_l2_and_up)
+  return _internal_get_hit_l2_and_up();
+}
+inline void ServerStatsResp::_internal_set_get_hit_l2_and_up(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  get_hit_l2_and_up_ = value;
+}
+inline void ServerStatsResp::set_get_hit_l2_and_up(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_get_hit_l2_and_up(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.get_hit_l2_and_up)
+}
+
+// int64 row_cache_hit = 14;
+inline void ServerStatsResp::clear_row_cache_hit() {
+  row_cache_hit_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_row_cache_hit() const {
+  return row_cache_hit_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::row_cache_hit() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.row_cache_hit)
+  return _internal_row_cache_hit();
+}
+inline void ServerStatsResp::_internal_set_row_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  row_cache_hit_ = value;
+}
+inline void ServerStatsResp::set_row_cache_hit(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_row_cache_hit(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.row_cache_hit)
+}
+
+// int64 row_cache_miss = 15;
+inline void ServerStatsResp::clear_row_cache_miss() {
+  row_cache_miss_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_row_cache_miss() const {
+  return row_cache_miss_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::row_cache_miss() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.row_cache_miss)
+  return _internal_row_cache_miss();
+}
+inline void ServerStatsResp::_internal_set_row_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  row_cache_miss_ = value;
+}
+inline void ServerStatsResp::set_row_cache_miss(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_row_cache_miss(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.row_cache_miss)
+}
+
+// int64 compact_read_bytes = 16;
+inline void ServerStatsResp::clear_compact_read_bytes() {
+  compact_read_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_compact_read_bytes() const {
+  return compact_read_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::compact_read_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.compact_read_bytes)
+  return _internal_compact_read_bytes();
+}
+inline void ServerStatsResp::_internal_set_compact_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  compact_read_bytes_ = value;
+}
+inline void ServerStatsResp::set_compact_read_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_compact_read_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.compact_read_bytes)
+}
+
+// int64 compact_write_bytes = 17;
+inline void ServerStatsResp::clear_compact_write_bytes() {
+  compact_write_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_compact_write_bytes() const {
+  return compact_write_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::compact_write_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.compact_write_bytes)
+  return _internal_compact_write_bytes();
+}
+inline void ServerStatsResp::_internal_set_compact_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  compact_write_bytes_ = value;
+}
+inline void ServerStatsResp::set_compact_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_compact_write_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.compact_write_bytes)
+}
+
+// int64 flush_write_bytes = 18;
+inline void ServerStatsResp::clear_flush_write_bytes() {
+  flush_write_bytes_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::_internal_flush_write_bytes() const {
+  return flush_write_bytes_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 ServerStatsResp::flush_write_bytes() const {
+  // @@protoc_insertion_point(field_get:eraftkv.ServerStatsResp.flush_write_bytes)
+  return _internal_flush_write_bytes();
+}
+inline void ServerStatsResp::_internal_set_flush_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  flush_write_bytes_ = value;
+}
+inline void ServerStatsResp::set_flush_write_bytes(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_flush_write_bytes(value);
+  // @@protoc_insertion_point(field_set:eraftkv.ServerStatsResp.flush_write_bytes)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

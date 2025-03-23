@@ -138,4 +138,8 @@ class Storage {
    * @return EStatus
    */
   virtual EStatus CreateCheckpoint(std::string snap_path) = 0;
+
+
+  virtual DBStats GetDBStats() = 0;
+
 };

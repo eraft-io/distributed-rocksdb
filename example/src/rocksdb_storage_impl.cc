@@ -34,11 +34,35 @@
 #include "rocksdb_storage_impl.h"
 
 #include <rocksdb/utilities/checkpoint.h>
+#include <rocksdb/statistics.h>
 #include <spdlog/spdlog.h>
 
 #include "eraft/util.h"
 #include "eraftkv_server.h"
 #include "protocol/eraftkv.pb.h"
+
+
+/**
+ * @brief Construct a new RocksDB Storage Impl object
+ *
+ * @param db_path
+ */
+RocksDBStorageImpl::RocksDBStorageImpl(std::string db_path) {
+  rocksdb::Options options;
+  stats_ = rocksdb::CreateDBStatistics();
+  options.statistics = stats_;
+  options.create_if_missing = true;
+  rocksdb::Status status = rocksdb::DB::Open(options, db_path, &kv_db_);
+  assert(status.ok());
+}
+
+/**
+ * @brief Destroy the Rocks DB Storage Impl:: RocksDB Storage Impl object
+ *
+ */
+RocksDBStorageImpl::~RocksDBStorageImpl() {
+  delete kv_db_;
+}
 
 /**
  * @brief
@@ -223,22 +247,25 @@ EStatus RocksDBStorageImpl::DelKV(std::string key) {
   return status.ok() ? EStatus::kOk : EStatus::kDelFromRocksDBErr;
 }
 
-/**
- * @brief Construct a new RocksDB Storage Impl object
- *
- * @param db_path
- */
-RocksDBStorageImpl::RocksDBStorageImpl(std::string db_path) {
-  rocksdb::Options options;
-  options.create_if_missing = true;
-  rocksdb::Status status = rocksdb::DB::Open(options, db_path, &kv_db_);
-  assert(status.ok());
-}
-
-/**
- * @brief Destroy the Rocks DB Storage Impl:: RocksDB Storage Impl object
- *
- */
-RocksDBStorageImpl::~RocksDBStorageImpl() {
-  delete kv_db_;
+DBStats RocksDBStorageImpl::GetDBStats() {
+   DBStats db_stats;
+   db_stats.keys_written = stats_->getTickerCount(rocksdb::NUMBER_KEYS_WRITTEN);
+   db_stats.keys_read = stats_->getTickerCount(rocksdb::NUMBER_KEYS_READ);
+   db_stats.total_write_bytes = stats_->getTickerCount(rocksdb::BYTES_WRITTEN);
+   db_stats.total_read_bytes = stats_->getTickerCount(rocksdb::BYTES_READ);
+   db_stats.block_cache_miss = stats_->getTickerCount(rocksdb::BLOCK_CACHE_MISS);
+   db_stats.block_cache_hit = stats_->getTickerCount(rocksdb::BLOCK_CACHE_HIT);
+   db_stats.block_cache_write_bytes = stats_->getTickerCount(rocksdb::BLOCK_CACHE_BYTES_WRITE);
+   db_stats.block_cache_read_bytes = stats_->getTickerCount(rocksdb::BLOCK_CACHE_BYTES_READ);
+   db_stats.memtable_hit = stats_->getTickerCount(rocksdb::MEMTABLE_HIT);
+   db_stats.memtable_miss = stats_->getTickerCount(rocksdb::MEMTABLE_MISS);
+   db_stats.get_hit_l0 = stats_->getTickerCount(rocksdb::GET_HIT_L0);
+   db_stats.get_hit_l1 = stats_->getTickerCount(rocksdb::GET_HIT_L1);
+   db_stats.get_hit_l2_and_up = stats_->getTickerCount(rocksdb::GET_HIT_L2_AND_UP);
+   db_stats.row_cache_hit = stats_->getTickerCount(rocksdb::ROW_CACHE_HIT);
+   db_stats.row_cache_miss = stats_->getTickerCount(rocksdb::ROW_CACHE_MISS);
+   db_stats.compact_read_bytes = stats_->getTickerCount(rocksdb::COMPACT_READ_BYTES);
+   db_stats.compact_write_bytes = stats_->getTickerCount(rocksdb::COMPACT_WRITE_BYTES);
+   db_stats.flush_write_bytes = stats_->getTickerCount(rocksdb::FLUSH_WRITE_BYTES);
+   return db_stats;
 }
