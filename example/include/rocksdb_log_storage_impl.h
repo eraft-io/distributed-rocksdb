@@ -153,6 +153,7 @@ class RocksDBSingleLogStorageImpl : public LogStore {
 
   int64_t applied_idx_;
 
+  rocksdb::DB* log_meta_db_;
 
   rocksdb::DB* log_db_;
 };

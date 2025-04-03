@@ -158,6 +158,11 @@ class RocksDBStorageImpl : public Storage {
   /**
    * 
    */
+  rocksdb::DB* kv_meta_db_;
+
+  /**
+   * 
+   */
   std::shared_ptr<rocksdb::Statistics> stats_;
 };
 

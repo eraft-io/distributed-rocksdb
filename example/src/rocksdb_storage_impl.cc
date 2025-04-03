@@ -54,6 +54,10 @@ RocksDBStorageImpl::RocksDBStorageImpl(std::string db_path) {
   options.create_if_missing = true;
   rocksdb::Status status = rocksdb::DB::Open(options, db_path, &kv_db_);
   assert(status.ok());
+  rocksdb::Options meta_options;
+  meta_options.create_if_missing = true;
+  rocksdb::Status status_ = rocksdb::DB::Open(meta_options, db_path + "_m", &kv_meta_db_);
+  assert(status_.ok());
 }
 
 /**
@@ -62,6 +66,7 @@ RocksDBStorageImpl::RocksDBStorageImpl(std::string db_path) {
  */
 RocksDBStorageImpl::~RocksDBStorageImpl() {
   delete kv_db_;
+  delete kv_meta_db_;
 }
 
 /**
@@ -98,11 +103,11 @@ EStatus RocksDBStorageImpl::SaveRaftMeta(RaftServer* raft,
                                          int64_t     term,
                                          int64_t     vote) {
   auto status =
-      kv_db_->Put(rocksdb::WriteOptions(), "M:TERM", std::to_string(term));
+      kv_meta_db_->Put(rocksdb::WriteOptions(), "TERM", std::to_string(term));
   if (!status.ok()) {
     return EStatus::kError;
   }
-  status = kv_db_->Put(rocksdb::WriteOptions(), "M:VOTE", std::to_string(vote));
+  status = kv_meta_db_->Put(rocksdb::WriteOptions(), "VOTE", std::to_string(vote));
   if (!status.ok()) {
     return EStatus::kError;
   }
@@ -122,13 +127,13 @@ EStatus RocksDBStorageImpl::ReadRaftMeta(RaftServer* raft,
                                          int64_t*    vote) {
   try {
     std::string term_str;
-    auto status = kv_db_->Get(rocksdb::ReadOptions(), "M:TERM", &term_str);
+    auto status = kv_meta_db_->Get(rocksdb::ReadOptions(), "TERM", &term_str);
     *term = static_cast<int64_t>(stoi(term_str));
     if (!status.ok()) {
       return EStatus::kError;
     }
     std::string vote_str;
-    status = kv_db_->Get(rocksdb::ReadOptions(), "M:VOTE", &vote_str);
+    status = kv_meta_db_->Get(rocksdb::ReadOptions(), "VOTE", &vote_str);
     *vote = static_cast<int64_t>(stoi(vote_str));
     if (!status.ok()) {
       return EStatus::kError;
@@ -151,7 +156,7 @@ EStatus RocksDBStorageImpl::ReadRaftMeta(RaftServer* raft,
  */
 EStatus RocksDBStorageImpl::PutKV(std::string key, std::string val) {
   SPDLOG_INFO("put key {} value {} to db", key, val);
-  auto status = kv_db_->Put(rocksdb::WriteOptions(), "U:" + key, val);
+  auto status = kv_db_->Put(rocksdb::WriteOptions(), key, val);
   return status.ok() ? EStatus::kOk : EStatus::kPutKeyToRocksDBErr;
 }
 
@@ -163,7 +168,7 @@ EStatus RocksDBStorageImpl::PutKV(std::string key, std::string val) {
  */
 std::pair<std::string, bool> RocksDBStorageImpl::GetKV(std::string key) {
   std::string value;
-  auto        status = kv_db_->Get(rocksdb::ReadOptions(), "U:" + key, &value);
+  auto        status = kv_db_->Get(rocksdb::ReadOptions(), key, &value);
   return std::make_pair<std::string, bool>(std::move(value),
                                            !status.IsNotFound());
 }
@@ -181,7 +186,7 @@ std::map<std::string, std::string> RocksDBStorageImpl::PrefixScan(
     int64_t     offset,
     int64_t     limit) {
   auto iter = kv_db_->NewIterator(rocksdb::ReadOptions());
-  iter->Seek("U:" + prefix);
+  iter->Seek(prefix);
   while (iter->Valid() && offset > 0) {
     offset -= 1;
     iter->Next();
@@ -243,7 +248,7 @@ EStatus RocksDBStorageImpl::ProductSST(std::string snap_base_path,
  */
 EStatus RocksDBStorageImpl::DelKV(std::string key) {
   SPDLOG_DEBUG("del key {}", key);
-  auto status = kv_db_->Delete(rocksdb::WriteOptions(), "U:" + key);
+  auto status = kv_db_->Delete(rocksdb::WriteOptions(), key);
   return status.ok() ? EStatus::kOk : EStatus::kDelFromRocksDBErr;
 }
 
